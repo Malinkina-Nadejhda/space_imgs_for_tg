@@ -1,5 +1,7 @@
 import requests
-from imgs_downloader import download_imgs
+import configargparse
+from imgs_downloader import download_imgs, create_folder
+from dotenv import load_dotenv
 
 
 def get_laters_launch():
@@ -11,7 +13,7 @@ def get_laters_launch():
     for launch in reversed(launches):
         flickr_photos = launch.get("links").get("flickr").get("original")
         if flickr_photos:
-            latest_launch = launch.get("links").get("flickr").get("original")
+            latest_launch = flickr_photos
             return latest_launch
 
 
@@ -24,18 +26,41 @@ def get_launch(user_input):
 
 
 def main():
-    user_input = input(
-        "Введите id запуска, \n"
-        "или нажмите Enter для загрузки фото с последнего запуска: "
+    load_dotenv()
+    parser = configargparse.ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        choices=["last", "id"],
+        default="last",
+        help="last - последний запуск,\n"
+             "id - id запуска,\n"
+             "default - last"
     )
+    parser.add_argument(
+        "--id",
+        type=str,
+        help="Нужен для --mode id.\n"
+             "Пример: --mode id --id 5eb87d46ffd86e000604b388"
+    )
+    parser.add_argument(
+        "--folder",
+        type=str,
+        env_var="FETCH_FOLDER",
+        default="Images",
+        help="Имя папки\Путь к папке"
+    )
+    args = parser.parse_args()
+
     try:
-        if not user_input:
+        if args.mode == "last":
             launch = get_laters_launch()
-            download_imgs(launch)
+            folder = create_folder(args.folder)
+            download_imgs(launch, folder, None)
             print("Скачивание завершено")
         else:
-            launch = get_launch(user_input)
-            download_imgs(launch)
+            launch = get_launch(args.id)
+            folder = create_folder(args.folder)
+            download_imgs(launch, folder, None)
             print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
@@ -45,4 +70,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,7 +1,9 @@
 import requests
 import os
+import configargparse
 from dotenv import load_dotenv
-from imgs_downloader import download_imgs
+from imgs_downloader import download_imgs, create_folder
+from datetime import datetime
 
 
 def get_epic_data(nasa_token, user_date):
@@ -16,28 +18,56 @@ def get_epic_data(nasa_token, user_date):
     return epic_data
 
 
-def get_epic_imgs_urls(epic_data, nasa_token):
+def get_epic_imgs_urls(epic_data, count):
     epic_imgs_urls = []
-    for epic in epic_data:
+    for epic in epic_data[:count]:
         url = "https://api.nasa.gov/EPIC/archive/natural"
-        date = f"{epic.get('date')[0:10]}".replace("-", "/")
-        epic_img_url = f"{url}/{date}/png/{epic.get('image')}.png?api_key={nasa_token}"
+        date_str = epic.get("date")
+        date_obj = datetime.fromisoformat(date_str)
+        date = date_obj.strftime("%Y/%m/%d")
+        epic_img_url = f"{url}/{date}/png/{epic.get('image')}.png"
         epic_imgs_urls.append(epic_img_url)
-        epic_imgs_urls = epic_imgs_urls[0:3]
+    epic_imgs_urls = epic_imgs_urls
     return epic_imgs_urls
 
 
 def main():
     load_dotenv()
-    user_date = input(
-        "Введите дату. Формат гггг-мм-дд. Пример (2026-04-26):\n"
-        "Или введите Enter для актуальных фото: "
+    parser = configargparse.ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        choices=["last", "date"],
+        default="last",
+        help="last - самые свежие фото,\n"
+             "date - фото с заданной даты,\n"
+             "default - last"
     )
+    parser.add_argument(
+        "--date",
+        type=str,
+        help="Нужен для --mode date.\n"
+             "Дата в формате ГГГГ-ММ-ДД.\n"
+             "Пример ввода: --mode date --date 2026-04-26"
+    )
+    parser.add_argument(
+        "--folder",
+        type=str,
+        env_var="EPIC_FOLDER",
+        default="Images",
+        help="Имя папки\Путь к папке"
+    )
+    args = parser.parse_args()
+
     try:
-        nasa_token = os.getenv("NASA_TOKEN")
-        epic_data = get_epic_data(nasa_token, user_date)
-        epic_imgs_urls = get_epic_imgs_urls(epic_data, nasa_token)
-        download_imgs(epic_imgs_urls)
+        nasa_token = os.environ["NASA_TOKEN"]
+        count = int(os.getenv("QUANTITY_EPIC"))
+        if args.mode == "date":
+            epic_data = get_epic_data(nasa_token, args.date)
+        else:
+            epic_data = get_epic_data(nasa_token, None)
+        epic_imgs_urls = get_epic_imgs_urls(epic_data, count)
+        folder = create_folder(args.folder)
+        download_imgs(epic_imgs_urls, folder, nasa_token)
         print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
@@ -47,4 +77,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

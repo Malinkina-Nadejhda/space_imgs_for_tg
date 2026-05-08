@@ -1,14 +1,16 @@
 import requests
 import urllib.parse
 import os.path
+import os
 from dotenv import load_dotenv
-from imgs_downloader import download_imgs
+from imgs_downloader import download_imgs, create_folder
+import configargparse
 
 
-def get_apod_urls_collection(nasa_token):
+def get_apod_urls_collection(nasa_token, count):
     nasa_apod_url = "https://api.nasa.gov/planetary/apod"
     params = {"api_key": nasa_token,
-              "count": 30}
+              "count": count}
     encoded_params = urllib.parse.urlencode(params)
     response = requests.get(nasa_apod_url, params=encoded_params)
     response.raise_for_status()
@@ -46,17 +48,31 @@ def get_jpg_urls(apod_urls):
 
 def main():
     load_dotenv()
-    nasa_token = os.getenv("NASA_TOKEN")
-    user_input = input(
-        "Нажмите Enter, чтобы скачать коллекцию фото. \n"
-        "Введите любой символ, чтобы скачать фото дня от Nasa: "
-
+    parser = configargparse.ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        choices=["collection", "day"],
+        default="day",
+        help="collection - коллекция,\n"
+             "day - фото дня,\n"
+             "default - day"
     )
+    parser.add_argument(
+        "--folder",
+        type=str,
+        env_var="APOD_FOLDER",
+        default="Images",
+        help="Имя папки\Путь к папке"
+    )
+    args = parser.parse_args()
+    nasa_token = os.environ["NASA_TOKEN"]
     try:
-        if not user_input:
-            apod_urls = get_apod_urls_collection(nasa_token)
+        if args.mode == "collection":
+            count = int(os.getenv("QUANTITY_APOD", 5))
+            apod_urls = get_apod_urls_collection(nasa_token, count)
             apod_imgs_urls = get_jpg_urls(apod_urls)
-            download_imgs(apod_imgs_urls)
+            folder = create_folder(args.folder)
+            download_imgs(apod_imgs_urls, folder, None)
             print("Скачивание завершено")
         else:
             apod_day_url = get_apod_day_url(nasa_token)
@@ -64,7 +80,8 @@ def main():
             if not day_img_url:
                 print("Сегодня нет фото от Nasa")
             else:
-                download_imgs(day_img_url)
+                folder = create_folder(args.folder)
+                download_imgs(day_img_url, folder, None)
                 print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
@@ -74,4 +91,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
