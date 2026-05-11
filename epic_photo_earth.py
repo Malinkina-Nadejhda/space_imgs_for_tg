@@ -22,10 +22,10 @@ def get_epic_imgs_urls(epic_data, count):
     epic_imgs_urls = []
     for epic in epic_data[:count]:
         url = "https://api.nasa.gov/EPIC/archive/natural"
-        date_str = epic.get("date")
+        date_str = epic["date"]
         date_obj = datetime.fromisoformat(date_str)
         date = date_obj.strftime("%Y/%m/%d")
-        epic_img_url = f"{url}/{date}/png/{epic.get('image')}.png"
+        epic_img_url = f"{url}/{date}/png/{epic["image"]}.png"
         epic_imgs_urls.append(epic_img_url)
     return epic_imgs_urls
 
