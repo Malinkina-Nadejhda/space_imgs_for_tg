@@ -11,7 +11,7 @@ def get_laters_launch():
     launches = response.json()
 
     for launch in reversed(launches):
-        flickr_photos = launch.get("links").get("flickr").get("original")
+        flickr_photos = launch["links"]["flickr"]["original"]
         if flickr_photos:
             latest_launch = flickr_photos
             return latest_launch
@@ -21,7 +21,7 @@ def get_launch(id_launch):
     url = f"https://api.spacexdata.com/v5/launches/{id_launch}"
     response = requests.get(url)
     response.raise_for_status()
-    launch = response.json().get("links").get("flickr").get("original")
+    launch = response.json()["links"]["flickr"]["original"]
     return launch
 
 
