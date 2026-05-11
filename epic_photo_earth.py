@@ -27,7 +27,6 @@ def get_epic_imgs_urls(epic_data, count):
         date = date_obj.strftime("%Y/%m/%d")
         epic_img_url = f"{url}/{date}/png/{epic.get('image')}.png"
         epic_imgs_urls.append(epic_img_url)
-    epic_imgs_urls = epic_imgs_urls
     return epic_imgs_urls
 
 
