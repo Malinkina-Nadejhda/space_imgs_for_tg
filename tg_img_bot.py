@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from telegram.error import NetworkError, TimedOut, TelegramError
 
 
-def send_img(bot, tg_chat_id, user_input):
-    with open(user_input, 'rb') as photo:
+def send_img(bot, tg_chat_id, path):
+    with open(path, 'rb') as photo:
         bot.send_photo(chat_id=tg_chat_id, photo=photo)
 
 
