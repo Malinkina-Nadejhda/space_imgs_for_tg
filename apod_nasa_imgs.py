@@ -72,7 +72,8 @@ def main():
             apod_urls = get_apod_urls_collection(nasa_token, count)
             apod_imgs_urls = get_jpg_urls(apod_urls)
             folder = create_folder(args.folder)
-            download_imgs(apod_imgs_urls, folder, None)
+            for img_url in apod_imgs_urls:
+                download_imgs(img_url, folder, None)
             print("Скачивание завершено")
         else:
             apod_day_url = get_apod_day_url(nasa_token)

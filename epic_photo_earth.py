@@ -67,7 +67,8 @@ def main():
             epic_data = get_epic_data(nasa_token, None)
         epic_imgs_urls = get_epic_imgs_urls(epic_data, count)
         folder = create_folder(args.folder)
-        download_imgs(epic_imgs_urls, folder, nasa_token)
+        for epic_img_url in epic_imgs_urls:
+            download_imgs(epic_img_url, folder, nasa_token)
         print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
