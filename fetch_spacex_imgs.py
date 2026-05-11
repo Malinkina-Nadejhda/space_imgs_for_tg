@@ -17,8 +17,8 @@ def get_laters_launch():
             return latest_launch
 
 
-def get_launch(user_input):
-    url = f"https://api.spacexdata.com/v5/launches/{user_input}"
+def get_launch(id_launch):
+    url = f"https://api.spacexdata.com/v5/launches/{id_launch}"
     response = requests.get(url)
     response.raise_for_status()
     launch = response.json().get("links").get("flickr").get("original")
