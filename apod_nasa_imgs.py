@@ -29,7 +29,7 @@ def get_apod_day_url(nasa_token):
     encoded_params = urllib.parse.urlencode(params)
     response = requests.get(nasa_apod_url, params=encoded_params)
     response.raise_for_status()
-    apod_day_url = response.json().get("url")
+    apod_day_url = response.json()["url"]
     apod_day_url = [apod_day_url]
     return apod_day_url
 
