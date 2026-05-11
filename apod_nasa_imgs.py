@@ -18,8 +18,8 @@ def get_apod_urls_collection(nasa_token, count):
     apod_urls_collection = []
 
     for apod in apod_collection:
-        img_url = apod.get("url")
-        apod_urls_collection.append(img_url)
+        if apod["media_type"] == "image":
+            apod_urls_collection.append(apod["url"])
     return apod_urls_collection
 
 
