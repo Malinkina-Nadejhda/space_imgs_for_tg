@@ -59,7 +59,7 @@ def main():
 
     try:
         nasa_token = os.environ["NASA_TOKEN"]
-        count = int(os.getenv("QUANTITY_EPIC"))
+        count = int(os.getenv("QUANTITY_EPIC", 5))
         if args.mode == "date":
             epic_data = get_epic_data(nasa_token, args.date)
         else:
