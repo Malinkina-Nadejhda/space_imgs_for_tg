@@ -8,8 +8,7 @@ from telegram.error import NetworkError, TimedOut, TelegramError
 
 
 def send_img(bot, tg_chat_id, user_input):
-    img_path = user_input
-    with open(img_path, 'rb') as photo:
+    with open(user_input, 'rb') as photo:
         bot.send_photo(chat_id=tg_chat_id, photo=photo)
 
 
