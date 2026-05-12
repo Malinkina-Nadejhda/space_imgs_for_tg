@@ -12,18 +12,6 @@ def send_img(bot, tg_chat_id, path):
         bot.send_photo(chat_id=tg_chat_id, photo=photo)
 
 
-def send_random_imgs(bot, tg_chat_id, path, interval):
-    imgs_folder = path
-    imgs = os.listdir(imgs_folder)
-    while True:
-        random.shuffle(imgs)
-        for img in imgs:
-            img_path = os.path.join(imgs_folder, img)
-            with open(img_path, 'rb') as photo:
-                bot.send_photo(chat_id=tg_chat_id, photo=photo)
-                time.sleep(interval)
-
-
 def main():
     load_dotenv()
     parser = argparse.ArgumentParser()
@@ -50,7 +38,13 @@ def main():
     while True:
         try:
             if args.mode == "auto":
-                send_random_imgs(bot, tg_chat_id, args.path, interval)
+                imgs = os.listdir(args.path)
+                while True:
+                    random.shuffle(imgs)
+                    for img in imgs:
+                        img_path = os.path.join(args.path, img)
+                        send_img(bot, tg_chat_id, img_path)
+                        time.sleep(interval)
             else:
                 send_img(bot, tg_chat_id, args.path)
             break
