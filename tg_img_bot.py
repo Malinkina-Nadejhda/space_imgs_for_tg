@@ -4,7 +4,7 @@ import time
 import random
 import argparse
 from dotenv import load_dotenv
-from telegram.error import NetworkError, TimedOut, TelegramError
+from telegram.error import NetworkError, TimedOut, TelegramError, InvalidToken
 
 
 def send_img(bot, tg_chat_id, path):
@@ -30,11 +30,29 @@ def main():
              "или изображению"
     )
     args = parser.parse_args()
-    tg_token = os.environ["TELEGRAM_TOKEN"]
-    tg_chat_id = os.environ["TG_CHAT_ID"]
     interval = int(os.getenv("PUBLIC_INTERVAL", 14400))
-    bot = telegram.Bot(token=tg_token)
     delay = 10
+    try:
+        tg_token = os.environ["TELEGRAM_TOKEN"]
+        tg_chat_id = os.environ["TG_CHAT_ID"]
+    except KeyError:
+        print("Ошибка, не найдена переменные 'TELEGRAM_TOKEN' или"
+              "'TG_CHAT_ID' в .env файле!")
+        return
+    try:
+        bot = telegram.Bot(token=tg_token)
+        bot.get_me()
+    except InvalidToken:
+        print("Невалидный токен бота, "
+              "Проверьте файл .env")
+        return
+    try:
+        bot.send_chat_action(chat_id=tg_chat_id, action=telegram.ChatAction.TYPING)
+    except TelegramError:
+        print("Отсутсвует id чата, "
+              "Проверьте файл .env")
+        return
+
     while True:
         try:
             if args.mode == "auto":
@@ -48,24 +66,19 @@ def main():
             else:
                 send_img(bot, tg_chat_id, args.path)
             break
-        except (NetworkError, TimedOut, TelegramError):
+        except (NetworkError, TimedOut):
             print("Ошибка соединения")
             print(f"Повторное соединение через {delay} секунд")
             time.sleep(delay)
-        except KeyError:
-            print("Ошибка, не найден токен авторизации!")
-            break
         except FileNotFoundError:
             print("Не найден файл или директория")
             break
         except TypeError:
             print("Неверный тип файла")
             break
-        except Exception as err:
-            print(f"Ошибка {err}")
-            break
 
 
 if __name__ == "__main__":
     main()
+
 
