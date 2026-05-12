@@ -56,9 +56,14 @@ def main():
         help="Имя папки\Путь к папке"
     )
     args = parser.parse_args()
-
     try:
         nasa_token = os.environ["NASA_TOKEN"]
+    except KeyError:
+        print("Не найдена переменная 'NASA_TOKEN'"
+              "в .env файле")
+        return
+
+    try:
         count = int(os.getenv("QUANTITY_EPIC", 5))
         if args.mode == "date":
             epic_data = get_epic_data(nasa_token, args.date)
@@ -69,10 +74,11 @@ def main():
         for epic_img_url in epic_imgs_urls:
             download_imgs(epic_img_url, folder, nasa_token)
         print("Скачивание завершено")
-    except requests.exceptions.HTTPError:
-        print("Ошибка соединения")
-    except Exception:
-        print("Неизвестная ошибка")
+    except requests.exceptions.HTTPError as err:
+        if err.response.status_code == 403:
+            print("Невалидный токен NASA API.")
+    except requests.exceptions.ConnectionError:
+        print("Ошибка соединения. Проверьте подключение")
 
 
 if __name__ == "__main__":
