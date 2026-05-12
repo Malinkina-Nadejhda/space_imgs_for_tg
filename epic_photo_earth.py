@@ -67,6 +67,10 @@ def main():
         count = int(os.getenv("QUANTITY_EPIC", 5))
         if args.mode == "date":
             epic_data = get_epic_data(nasa_token, args.date)
+            if not epic_data:
+                print("На эту дату нет фото. "
+                      "Попробуйте другое число")
+                return
         else:
             epic_data = get_epic_data(nasa_token, None)
         epic_imgs_urls = get_epic_imgs_urls(epic_data, count)
