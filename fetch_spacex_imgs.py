@@ -66,8 +66,6 @@ def main():
             print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
-    except Exception:
-        print("Неизвестная ошибка")
 
 
 if __name__ == "__main__":
