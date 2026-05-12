@@ -30,7 +30,6 @@ def get_apod_day_url(nasa_token):
     response = requests.get(nasa_apod_url, params=encoded_params)
     response.raise_for_status()
     apod_day_url = response.json()["url"]
-    apod_day_url = [apod_day_url]
     return apod_day_url
 
 
@@ -82,12 +81,12 @@ def main():
             print("Скачивание завершено")
         else:
             apod_day_url = get_apod_day_url(nasa_token)
-            day_img_url = get_jpg_urls(apod_day_url)
+            day_img_url = get_jpg_urls([apod_day_url])
             if not day_img_url:
                 print("Сегодня нет фото от Nasa")
             else:
                 folder = create_folder(args.folder)
-                download_imgs(day_img_url, folder, None)
+                download_imgs(day_img_url[0], folder, None)
                 print("Скачивание завершено")
     except requests.exceptions.HTTPError as err:
         if err.response.status_code == 403:
