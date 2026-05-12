@@ -65,7 +65,12 @@ def main():
         help="Имя папки\Путь к папке"
     )
     args = parser.parse_args()
-    nasa_token = os.environ["NASA_TOKEN"]
+    try:
+        nasa_token = os.environ["NASA_TOKEN"]
+    except KeyError:
+        print("Не найдена переменная 'NASA_TOKEN'"
+              "в .env файле")
+        return
     try:
         if args.mode == "collection":
             count = int(os.getenv("QUANTITY_APOD", 5))
@@ -84,10 +89,11 @@ def main():
                 folder = create_folder(args.folder)
                 download_imgs(day_img_url, folder, None)
                 print("Скачивание завершено")
-    except requests.exceptions.HTTPError:
-        print("Ошибка соединения")
-    except Exception:
-        print("Неизвестная ошибка")
+    except requests.exceptions.HTTPError as err:
+        if err.response.status_code == 403:
+            print("Невалидный токен NASA API.")
+    except requests.exceptions.ConnectionError:
+        print("Ошибка соединения. Проверьте подключение")
 
 
 if __name__ == "__main__":
