@@ -36,7 +36,7 @@ def main():
         tg_token = os.environ["TELEGRAM_TOKEN"]
         tg_chat_id = os.environ["TG_CHAT_ID"]
     except KeyError:
-        print("Ошибка, не найдена переменные 'TELEGRAM_TOKEN' или"
+        print("Ошибка. Не найдены переменные 'TELEGRAM_TOKEN' или"
               "'TG_CHAT_ID' в .env файле!")
         return
     try:
