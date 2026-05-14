@@ -52,17 +52,18 @@ def main():
     args = parser.parse_args()
 
     try:
+        params = {}
         if args.mode == "last":
             launch = get_laters_launch()
             folder = create_folder(args.folder)
             for img_url in launch:
-                download_imgs(img_url, folder, None)
+                download_imgs(img_url, folder, params)
             print("Скачивание завершено")
         else:
             launch = get_launch(args.id)
             folder = create_folder(args.folder)
             for img_url in launch:
-                download_imgs(img_url, folder, None)
+                download_imgs(img_url, folder, params)
             print("Скачивание завершено")
     except requests.exceptions.HTTPError:
         print("Ошибка соединения")
