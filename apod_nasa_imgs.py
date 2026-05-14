@@ -15,11 +15,7 @@ def get_apod_urls_collection(nasa_token, count):
     response = requests.get(nasa_apod_url, params=encoded_params)
     response.raise_for_status()
     apod_collection = response.json()
-    apod_urls_collection = []
-
-    for apod in apod_collection:
-        if apod["media_type"] == "image":
-            apod_urls_collection.append(apod["url"])
+    apod_urls_collection = [apod["url"] for apod in apod_collection if apod["media_type"] == "image"]
     return apod_urls_collection
 
 
