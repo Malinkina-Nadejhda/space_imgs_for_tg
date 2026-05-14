@@ -49,7 +49,7 @@ def main():
     try:
         bot.send_chat_action(chat_id=tg_chat_id, action=telegram.ChatAction.TYPING)
     except TelegramError:
-        print("Отсутсвует id чата, "
+        print("Отсутствует id чата, "
               "Проверьте файл .env")
         return
 
