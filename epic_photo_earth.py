@@ -65,6 +65,7 @@ def main():
 
     try:
         count = int(os.getenv("QUANTITY_EPIC", 5))
+        params = {"api_key": nasa_token}
         if args.mode == "date":
             epic_data = get_epic_data(nasa_token, args.date)
             if not epic_data:
@@ -76,7 +77,7 @@ def main():
         epic_imgs_urls = get_epic_imgs_urls(epic_data, count)
         folder = create_folder(args.folder)
         for epic_img_url in epic_imgs_urls:
-            download_imgs(epic_img_url, folder, nasa_token)
+            download_imgs(epic_img_url, folder, params)
         print("Скачивание завершено")
     except requests.exceptions.HTTPError as err:
         if err.response.status_code == 403:

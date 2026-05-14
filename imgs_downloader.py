@@ -8,8 +8,7 @@ def create_folder(folder):
     return folder
 
 
-def download_imgs(img_url, folder, nasa_token):
-    params = {"api_key": nasa_token}
+def download_imgs(img_url, folder, params):
     response = requests.get(img_url, params=params)
     response.raise_for_status()
     parsed_img_url = urllib.parse.urlparse(img_url)
