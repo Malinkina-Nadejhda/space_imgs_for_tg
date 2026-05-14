@@ -4,15 +4,16 @@ import requests
 
 
 def create_folder(folder):
-    os.makedirs(folder, exist_ok=True)
-    return folder
+    absolute_path = os.path.abspath(folder)
+    os.makedirs(absolute_path, exist_ok=True)
+    return absolute_path
 
 
-def download_imgs(img_url, folder, params):
+def download_imgs(img_url, absolute_path, params):
     response = requests.get(img_url, params=params)
     response.raise_for_status()
     parsed_img_url = urllib.parse.urlparse(img_url)
     img_name = os.path.basename(parsed_img_url.path)
-    image_path = os.path.join(folder, img_name)
+    image_path = os.path.join(absolute_path, img_name)
     with open(image_path, "wb") as file:
         file.write(response.content)
