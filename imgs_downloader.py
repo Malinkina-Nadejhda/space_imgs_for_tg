@@ -13,6 +13,6 @@ def download_imgs(img_url, folder, params):
     response.raise_for_status()
     parsed_img_url = urllib.parse.urlparse(img_url)
     img_name = os.path.basename(parsed_img_url.path)
-    image_path = os.path.join(folder, f"{img_name}.jpg")
+    image_path = os.path.join(folder, img_name)
     with open(image_path, "wb") as file:
         file.write(response.content)
