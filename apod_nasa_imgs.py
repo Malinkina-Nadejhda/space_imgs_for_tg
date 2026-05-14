@@ -67,13 +67,14 @@ def main():
               "в .env файле")
         return
     try:
+        params = {}
         if args.mode == "collection":
             count = int(os.getenv("QUANTITY_APOD", 5))
             apod_urls = get_apod_urls_collection(nasa_token, count)
             apod_imgs_urls = get_jpg_urls(apod_urls)
             folder = create_folder(args.folder)
             for img_url in apod_imgs_urls:
-                download_imgs(img_url, folder, None)
+                download_imgs(img_url, folder, params)
             print("Скачивание завершено")
         else:
             apod_day_url = get_apod_day_url(nasa_token)
@@ -82,7 +83,7 @@ def main():
                 print("Сегодня нет фото от Nasa")
             else:
                 folder = create_folder(args.folder)
-                download_imgs(day_img_url[0], folder, None)
+                download_imgs(day_img_url[0], folder, params)
                 print("Скачивание завершено")
     except requests.exceptions.HTTPError as err:
         if err.response.status_code == 403:
