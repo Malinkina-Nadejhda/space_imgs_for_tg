@@ -52,7 +52,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        params = {}
+        params = None
         if args.mode == "last":
             launch = get_laters_launch()
             folder = create_folder(args.folder)
