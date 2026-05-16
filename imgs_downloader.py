@@ -9,7 +9,7 @@ def create_folder(folder):
     return absolute_path
 
 
-def download_imgs(img_url, absolute_path, params):
+def download_imgs(img_url, absolute_path, params=None):
     response = requests.get(img_url, params=params)
     response.raise_for_status()
     parsed_img_url = urllib.parse.urlparse(img_url)
