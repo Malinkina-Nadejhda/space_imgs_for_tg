@@ -67,7 +67,7 @@ def main():
               "в .env файле")
         return
     try:
-        params = {}
+        params = None
         if args.mode == "collection":
             count = int(os.getenv("QUANTITY_APOD", 5))
             apod_urls = get_apod_urls_collection(nasa_token, count)
